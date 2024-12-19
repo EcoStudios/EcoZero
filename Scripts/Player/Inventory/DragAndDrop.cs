@@ -172,7 +172,7 @@ namespace Player.Inventory
 
         private void StopDragging()
         {
-            if (StartingSlot == null)
+            if (StartingSlot == null || _inventory.CursorSlotSystem.Slot.GetCurrentStack() == null)
             {
                 return;
             }

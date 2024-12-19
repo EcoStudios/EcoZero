@@ -55,7 +55,12 @@ namespace Player.Inventory
         {
             if (_itemStack == null)
             {
-                _image.transform.parent.gameObject.SetActive(false); 
+                
+                try
+                {
+                    _image.transform.parent.gameObject.SetActive(false);
+                }
+                catch (NullReferenceException) { } 
                 return;
             }
 
@@ -66,9 +71,7 @@ namespace Player.Inventory
                 _text.text = _itemStack.StackSize.ToString();
                 _text.color = _itemStack.StackSize >= _itemStack.Item.maxStackSize ? Color.red : Color.white;
             }
-            catch (NullReferenceException)
-            {
-            }
+            catch (NullReferenceException) { }
         }
 
         private void Update()

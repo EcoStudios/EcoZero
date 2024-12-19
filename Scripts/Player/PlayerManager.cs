@@ -1,4 +1,5 @@
 using Player.Inventory;
+using System_UI;
 using UnityEngine;
 using World.Items;
 
@@ -22,7 +23,6 @@ namespace Player
         // Static Vars from above
         public static float WalkingSpeed { get; private set; }
         public static float RunningSpeed { get; private set; }
-        public static LayerMask GroundLayer { get; private set; }
         public static float Gravity { get; private set; }
         public static float JumpForce { get; private set; }
         public static Item TestItem { get; private set; }
@@ -32,10 +32,13 @@ namespace Player
         // Object Vars
         public static GameObject PlayerGameObj { get; private set; }
         public static CharacterController PlayerController { get; private set; }
-        public static GameObject GroundCheck { get; private set; }
         public static Camera PlayerCamera { get; private set; }
         public static InventoryManager Inventory { get; private set; }
         public static GameObject InventoryObject { get; private set; }
+        public static SelectorManager Selector { get; private set; }
+        public static ActionBar ActionBar { get; private set; }
+        public static GameManager GameManager { get; private set; }
+        public static QuitMenu QuitMenu { get; private set; }
 
         void Start()
         {
@@ -46,11 +49,15 @@ namespace Player
             // Vars
             PlayerGameObj = gameObject;
             PlayerController = GetComponent<CharacterController>();
-            GroundCheck = GameObject.Find("GroundCheck");
-            GroundLayer = LayerMask.GetMask("Ground");
             PlayerCamera = Camera.main;
             Inventory = GetComponent<InventoryManager>();
             InventoryObject = transform.Find("Inventory").gameObject;
+            Selector = GameObject.Find("Selector").GetComponent<SelectorManager>();
+            ActionBar = GameObject.Find("ActionBar").GetComponent<ActionBar>();
+            ActionBar.Disable();
+            GameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+            QuitMenu = GameObject.Find("QuitMenu").GetComponent<QuitMenu>();
+            QuitMenu.Disable();
         
             WalkingSpeed = walkingSpeed;
             RunningSpeed = runningSpeed;
@@ -61,7 +68,7 @@ namespace Player
 
         private void Update()
         {
-            if (Input.GetKeyDown("e") || Input.GetKeyDown(KeyCode.Escape))
+            if (Input.GetKeyDown("e"))
             {
                 if (InventoryObject.activeInHierarchy)
                 {
@@ -70,6 +77,32 @@ namespace Player
                 else
                 {
                     Inventory.OpenInventory();
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                // To exit out of inv (another way of doin it)
+                if (InventoryObject.activeInHierarchy)
+                {
+                    Inventory.CloseInventory();
+                }
+                else
+                {
+                    // Quit Menu
+                    if (QuitMenu.gameObject.activeInHierarchy)
+                    {
+                        GameManager.gameState = GameManager.GameState.Playing;
+                        QuitMenu.Return();
+                    }
+                    else
+                    {
+                        GameManager.gameState = GameManager.GameState.Paused;
+                        QuitMenu.Enable();
+                        Selector.Disable();
+                        Cursor.lockState = CursorLockMode.None;
+                        Cursor.visible = true;
+                    }
                 }
             }
 

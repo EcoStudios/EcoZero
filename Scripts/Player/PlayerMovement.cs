@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (PlayerManager.GameManager.gameState == GameManager.GameState.Paused) { return; }
 
         // Resetting Velocity
         if (PlayerManager.PlayerController.isGrounded)

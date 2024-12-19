@@ -1,4 +1,5 @@
 using System;
+using System_UI;
 using UnityEngine;
 using World;
 using World.Items;
@@ -130,6 +131,7 @@ namespace Player.Inventory
             UpdateInventoryUI();
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+            PlayerManager.Selector.Disable();
         }
 
         public void UpdateInventoryUI()
@@ -161,6 +163,7 @@ namespace Player.Inventory
             PlayerManager.InventoryObject.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+            PlayerManager.Selector.Enable();
             if (DragAndDropSystem.IsDragging)
             {
                 // Drops the item in cursor slot when inv close
