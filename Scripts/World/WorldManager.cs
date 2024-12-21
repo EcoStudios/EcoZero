@@ -10,13 +10,13 @@ namespace World
 
         public Item testItem;
 
-        private static GameObject _droppedItemsFolder;
+        public static GameObject DroppedItemsFolder;
 
         private static readonly Dictionary<int, ItemStack> DroppedItems = new();
 
         public static void SpawnItem(ItemStack itemStack, Vector3 position)
         {
-            GameObject itemObject = Instantiate(itemStack.Item.itemPrefab, _droppedItemsFolder.transform, true);
+            GameObject itemObject = Instantiate(itemStack.Item.itemPrefab, DroppedItemsFolder.transform, true);
             itemObject.transform.position = position;
             itemObject.transform.rotation = Quaternion.identity;
 
@@ -28,9 +28,14 @@ namespace World
 
         public static void DeleteItem(int uuid)
         {
-            Transform iTransform = _droppedItemsFolder.transform.Find(uuid.ToString());
+            Transform iTransform = DroppedItemsFolder.transform.Find(uuid.ToString());
             Destroy(iTransform.gameObject);
             DroppedItems.Remove(uuid);
+        }
+
+        public static ItemStack GetItemStack(int uuid)
+        {
+            return DroppedItems[uuid];
         }
 
         private static int CreateUuid()
@@ -43,10 +48,12 @@ namespace World
             return uuid;
         }
 
+        public static bool ItemExistsInWorld(int uuid) => DroppedItems.ContainsKey(uuid);
+
 
         void Start()
         {
-            _droppedItemsFolder = new GameObject("DroppedItemsFolder");
+            DroppedItemsFolder = new GameObject("DroppedItemsFolder");
             SpawnItem(new ItemStack(testItem, 5), new Vector3(5, 0, 5));
         }
     }

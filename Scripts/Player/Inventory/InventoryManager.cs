@@ -35,6 +35,17 @@ namespace Player.Inventory
             _contents[slot] = item;
         }
 
+        public bool CanHoldItem(ItemStack item)
+        {
+            if (GetEmptySlot() != -404) return true;
+            if (FindItem(item) != -404)
+            {
+                ItemStack stack = _contents[FindItem(item)];
+                if (stack.StackSize + item.StackSize <= stack.Item.maxStackSize) return true;
+            }
+            return false;
+        }
+
         public int AddItem(ItemStack item)
         {
             int slot;
@@ -46,7 +57,7 @@ namespace Player.Inventory
                 if (currentItem.Item == item.Item && currentItem.Item.maxStackSize >= item.StackSize + currentItem.StackSize)
                 {
                     slot = i;
-                    currentItem.AddAmount(currentItem.StackSize);
+                    currentItem.AddAmount(item.StackSize);
                     return slot;
                 }
             }

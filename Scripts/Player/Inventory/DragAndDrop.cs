@@ -72,7 +72,8 @@ namespace Player.Inventory
             if (IsDragging && Input.GetMouseButtonDown(1)) // Right click on drag
             {
                 AddToSlot();
-            } else if (!IsDragging && Input.GetMouseButtonDown(1)) // Right click off of drag
+            } 
+            else if (!IsDragging && Input.GetMouseButtonDown(1)) // Right click off of drag
             {
                 SpitStack();
             }

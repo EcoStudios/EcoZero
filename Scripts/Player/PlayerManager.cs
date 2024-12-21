@@ -14,6 +14,9 @@ namespace Player
         public float runningSpeed;
         public float jumpForce;
         public float gravity;
+        
+        [Header("Picking Up Info")]
+        public float pickUpDistance;
 
         [Header("Test crap")] 
         public Item testItem;
@@ -26,6 +29,7 @@ namespace Player
         public static float Gravity { get; private set; }
         public static float JumpForce { get; private set; }
         public static Item TestItem { get; private set; }
+        public static float PickUpDistance { get; private set; }
     
         // Other Static vars
 
@@ -64,6 +68,7 @@ namespace Player
             Gravity = gravity;
             JumpForce = jumpForce;
             TestItem = testItem;
+            PickUpDistance = pickUpDistance;
         }
 
         private void Update()
