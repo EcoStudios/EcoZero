@@ -140,9 +140,7 @@ namespace Player.Inventory
         {
             PlayerManager.InventoryObject.SetActive(true);
             UpdateInventoryUI();
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            PlayerManager.Selector.Disable();
+            GameManager.EnableCursor();
         }
 
         public void UpdateInventoryUI()
@@ -172,8 +170,7 @@ namespace Player.Inventory
         public void CloseInventory()
         {
             PlayerManager.InventoryObject.SetActive(false);
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            GameManager.DisableCursor();
             PlayerManager.Selector.Enable();
             if (DragAndDropSystem.IsDragging)
             {

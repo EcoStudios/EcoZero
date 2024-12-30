@@ -1,4 +1,5 @@
 using Player.Inventory;
+using Player.Systems;
 using System_UI;
 using UnityEngine;
 using World.Items;
@@ -41,34 +42,28 @@ namespace Player
         public static GameObject InventoryObject { get; private set; }
         public static SelectorManager Selector { get; private set; }
         public static ActionBar ActionBar { get; private set; }
-        public static GameManager GameManager { get; private set; }
-        public static QuitMenu QuitMenu { get; private set; }
+        
 
         void Start()
         {
-            // Cursor 
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        
+            
+            
             // Vars
-            PlayerGameObj = gameObject;
-            PlayerController = GetComponent<CharacterController>();
-            PlayerCamera = Camera.main;
-            Inventory = GetComponent<InventoryManager>();
-            InventoryObject = transform.Find("Inventory").gameObject;
-            Selector = GameObject.Find("Selector").GetComponent<SelectorManager>();
-            ActionBar = GameObject.Find("ActionBar").GetComponent<ActionBar>();
-            ActionBar.Disable();
-            GameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-            QuitMenu = GameObject.Find("QuitMenu").GetComponent<QuitMenu>();
-            QuitMenu.Disable();
-        
             WalkingSpeed = walkingSpeed;
             RunningSpeed = runningSpeed;
             Gravity = gravity;
             JumpForce = jumpForce;
             TestItem = testItem;
             PickUpDistance = pickUpDistance;
+            
+            PlayerGameObj = gameObject;
+            PlayerController = GetComponent<CharacterController>();
+            Inventory = GetComponent<InventoryManager>();
+            PlayerCamera = Camera.main;
+            InventoryObject = transform.Find("Inventory").gameObject;
+            Selector = GameObject.Find("Selector").GetComponent<SelectorManager>();
+            ActionBar = GameObject.Find("ActionBar").GetComponent<ActionBar>();
+            ActionBar.Disable();
         }
 
         private void Update()
@@ -94,20 +89,10 @@ namespace Player
                 }
                 else
                 {
-                    // Quit Menu
-                    if (QuitMenu.gameObject.activeInHierarchy)
-                    {
-                        GameManager.gameState = GameManager.GameState.Playing;
-                        QuitMenu.Return();
-                    }
-                    else
-                    {
-                        GameManager.gameState = GameManager.GameState.Paused;
-                        QuitMenu.Enable();
-                        Selector.Disable();
-                        Cursor.lockState = CursorLockMode.None;
-                        Cursor.visible = true;
-                    }
+                    // Exit Menu
+                    GameManager.ActiveGameState = GameManager.GameState.ActiveInGameUI;
+                    GameManager.EnableCursor();
+                    ExitMenu exitMenu = new ExitMenu();
                 }
             }
 

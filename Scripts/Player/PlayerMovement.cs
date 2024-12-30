@@ -1,71 +1,72 @@
-using Player;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+namespace Player
 {
-
-    private float _rotation;
-    private Vector3 _velocity;
-
-    void Update()
+    public class PlayerMovement : MonoBehaviour
     {
-        if (PlayerManager.GameManager.gameState == GameManager.GameState.Paused) { return; }
 
-        // Resetting Velocity
-        if (PlayerManager.PlayerController.isGrounded)
+        private float _rotation;
+        private Vector3 _velocity;
+
+        void Update()
         {
-            _velocity.y = -2f;  
-        }
-
-        // Any movement
-        if (Input.GetKey("w") || Input.GetKey("a") || Input.GetKey("s") || Input.GetKey("d"))
-        {
-            float horizontal = Input.GetAxis("Horizontal");
-            float vertical = Input.GetAxis("Vertical");
-
-            Vector3 move = PlayerManager.PlayerGameObj.transform.right * horizontal +
-                           PlayerManager.PlayerGameObj.transform.forward * vertical;
-            
-            if (Input.GetKey(KeyCode.LeftShift))
+            if (GameManager.ActiveGameState <= 0) return;
+            // Resetting Velocity
+            if (PlayerManager.PlayerController.isGrounded)
             {
-                // Running
-                move *= PlayerManager.RunningSpeed;
+                _velocity.y = -2f;  
             }
-            else
+
+            // Any movement
+            if (Input.GetKey("w") || Input.GetKey("a") || Input.GetKey("s") || Input.GetKey("d"))
             {
-                // Walking
-                move *= PlayerManager.WalkingSpeed;
-            }
+                float horizontal = Input.GetAxis("Horizontal");
+                float vertical = Input.GetAxis("Vertical");
+
+                Vector3 move = PlayerManager.PlayerGameObj.transform.right * horizontal +
+                               PlayerManager.PlayerGameObj.transform.forward * vertical;
             
-            PlayerManager.PlayerController.Move(move * Time.deltaTime);
+                if (Input.GetKey(KeyCode.LeftShift))
+                {
+                    // Running
+                    move *= PlayerManager.RunningSpeed;
+                }
+                else
+                {
+                    // Walking
+                    move *= PlayerManager.WalkingSpeed;
+                }
+            
+                PlayerManager.PlayerController.Move(move * Time.deltaTime);
 
-        }
+            }
         
-        // Jumping
-        if (PlayerManager.PlayerController.isGrounded && Input.GetKey(KeyCode.Space))
-        {
-            _velocity.y = Mathf.Sqrt(PlayerManager.JumpForce * -2 * PlayerManager.Gravity);
-        }
+            // Jumping
+            if (PlayerManager.PlayerController.isGrounded && Input.GetKey(KeyCode.Space))
+            {
+                _velocity.y = Mathf.Sqrt(PlayerManager.JumpForce * -2 * PlayerManager.Gravity);
+            }
         
-        // Gravity
-        _velocity.y += PlayerManager.Gravity * Time.deltaTime;
-        PlayerManager.PlayerController.Move(_velocity * Time.deltaTime);
+            // Gravity
+            _velocity.y += PlayerManager.Gravity * Time.deltaTime;
+            PlayerManager.PlayerController.Move(_velocity * Time.deltaTime);
         
         
-        // Camera Movement
-        if (Cursor.lockState == CursorLockMode.Locked)
-        {
-            float mouseY = Input.GetAxis("Mouse Y");
-            float mouseX = Input.GetAxis("Mouse X");
-            _rotation += -mouseY * 5;
-            _rotation = Mathf.Clamp(_rotation, -30, 30);
+            // Camera Movement
+            if (Cursor.lockState == CursorLockMode.Locked)
+            {
+                float mouseY = Input.GetAxis("Mouse Y");
+                float mouseX = Input.GetAxis("Mouse X");
+                _rotation += -mouseY * 5;
+                _rotation = Mathf.Clamp(_rotation, -30, 40);
 
-            PlayerManager.PlayerCamera.transform.localRotation = Quaternion.Euler(_rotation, 0, 0);
-            PlayerManager.PlayerGameObj.transform.rotation *= Quaternion.Euler(0, mouseX * 5, 0);
+                PlayerManager.PlayerCamera.transform.localRotation = Quaternion.Euler(_rotation, 0, 0);
+                PlayerManager.PlayerGameObj.transform.rotation *= Quaternion.Euler(0, mouseX * 5, 0);
 
-        }
+            }
         
-    }
+        }
     
 
+    }
 }
