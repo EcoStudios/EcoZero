@@ -42,6 +42,7 @@ namespace Player
         public static GameObject InventoryObject { get; private set; }
         public static SelectorManager Selector { get; private set; }
         public static ActionBar ActionBar { get; private set; }
+        public static CraftingSystem CraftingSystem { get; private set; }
         
 
         void Start()
@@ -64,42 +65,50 @@ namespace Player
             Selector = GameObject.Find("Selector").GetComponent<SelectorManager>();
             ActionBar = GameObject.Find("ActionBar").GetComponent<ActionBar>();
             ActionBar.Disable();
+            CraftingSystem = new CraftingSystem();
         }
-
+        
         private void Update()
         {
-            if (Input.GetKeyDown("e"))
+
+            if (Input.GetKeyDown(KeyCode.E))
             {
                 if (InventoryObject.activeInHierarchy)
                 {
+                    GameManager.activeGameState = GameManager.GameState.Playing;
                     Inventory.CloseInventory();
                 }
                 else
                 {
+                    if (GameManager.activeGameState != GameManager.GameState.Playing) return;
+                    GameManager.activeGameState = GameManager.GameState.ActiveInGameUI;
                     Inventory.OpenInventory();
                 }
-            }
-
-            if (Input.GetKeyDown(KeyCode.Escape))
+            } else if (Input.GetKeyDown(KeyCode.Escape))
             {
                 // To exit out of inv (another way of doin it)
                 if (InventoryObject.activeInHierarchy)
                 {
                     Inventory.CloseInventory();
+                    GameManager.activeGameState = GameManager.GameState.Playing;
                 }
                 else
                 {
-                    // Exit Menu
-                    GameManager.ActiveGameState = GameManager.GameState.ActiveInGameUI;
-                    GameManager.EnableCursor();
-                    ExitMenu exitMenu = new ExitMenu();
+                    if (GameManager.activeGameState == GameManager.GameState.Playing)
+                    {
+                        // Exit Menu
+                        GameManager.activeGameState = GameManager.GameState.ActiveInGameUI;
+                        GameManager.EnableCursor();
+                        _ = new ExitMenu();
+                    }
                 }
+                
             }
 
-            if (Input.GetKeyDown("1"))
+            if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                 Inventory.AddItem(new ItemStack(testItem, 16));
-            } else if (Input.GetKeyDown("2"))
+            } else if (Input.GetKeyDown(KeyCode.Alpha2))
             {
                 Inventory.RemoveItem(new ItemStack(testItem, 16));
             }

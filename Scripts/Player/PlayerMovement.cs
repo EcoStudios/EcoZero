@@ -10,7 +10,7 @@ namespace Player
 
         void Update()
         {
-            if (GameManager.ActiveGameState <= 0) return;
+            if (GameManager.activeGameState <= 0) return;
             // Resetting Velocity
             if (PlayerManager.PlayerController.isGrounded)
             {

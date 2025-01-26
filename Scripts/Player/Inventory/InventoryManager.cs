@@ -23,6 +23,7 @@ namespace Player.Inventory
             InventoryUISystem = PlayerManager.InventoryObject.GetComponent<InventoryUI>();
             CursorSlotSystem = PlayerManager.InventoryObject.GetComponentInChildren<CursorSlot>();
             DragAndDropSystem = PlayerManager.InventoryObject.GetComponentInChildren<DragAndDrop>();
+            UpdateInventoryUI();
         }
 
         public ItemStack GetItem(int slot)
@@ -33,14 +34,15 @@ namespace Player.Inventory
         public void SetSlot(int slot, ItemStack item)
         {
             _contents[slot] = item;
+            UpdateInventoryUI();
         }
 
         public bool CanHoldItem(ItemStack item)
         {
             if (GetEmptySlot() != -404) return true;
-            if (FindItem(item) != -404)
+            if (FindItem(item.Item) != -404)
             {
-                ItemStack stack = _contents[FindItem(item)];
+                ItemStack stack = _contents[FindItem(item.Item)];
                 if (stack.StackSize + item.StackSize <= stack.Item.maxStackSize) return true;
             }
             return false;
@@ -77,7 +79,7 @@ namespace Player.Inventory
         {
             if (slot == -404)
             {
-                slot = FindItem(item);
+                slot = FindItem(item.Item);
                 if (slot == -404)
                 {
                     Console.Error.WriteLine("Can't find that Item!");
@@ -110,18 +112,39 @@ namespace Player.Inventory
             return result;
         }
 
-        private int FindItem(ItemStack item)
+        public int FindItem(Item item)
         {
             int result = -404;
             for (int i = 0; i < _contents.Length; i++)
             {
                 ItemStack currentItem = _contents[i];
                 if (currentItem == null) continue;
-                if (currentItem.Item == item.Item)
+                if (item.itemName == currentItem.Item.itemName)
                 {
+                    Debug.Log("yes");
                     result = i;
                 }
             }
+            return result;
+        }
+
+        public bool HasItem(Item item, int amount = 0)
+        {
+            bool result = FindItem(item) != -404;
+            if (amount != 0)
+            {
+                for (int i = 0; i < _contents.Length; i++)
+                {
+                    ItemStack currentItem = _contents[i];
+                    if (currentItem == null) continue;
+                    if (item.itemName == currentItem.Item.itemName && currentItem.StackSize >= amount)
+                    {
+                        Debug.Log("yes");
+                        result = true;
+                    }
+                }
+            }
+
             return result;
         }
 
@@ -139,31 +162,25 @@ namespace Player.Inventory
         public void OpenInventory()
         {
             PlayerManager.InventoryObject.SetActive(true);
-            UpdateInventoryUI();
+            PlayerManager.Selector.Disable();
             GameManager.EnableCursor();
+            UpdateInventoryUI();
         }
 
         public void UpdateInventoryUI()
         {
-            try
+            for (int i = 0; i < _contents.Length; i++)
             {
-                for (int i = 0; i < _contents.Length; i++)
+                if (_contents[i] == null) continue;
+                if (InventoryUISystem.Slots == null || i >= InventoryUISystem.Slots.Length) break;
+                Slot slot = InventoryUISystem.GetSlot(i);
+                if (!slot)
                 {
-                    if (_contents[i] == null) continue;
-                    if (i >= InventoryUISystem.Slots.Length) break;
-                    Slot slot = InventoryUISystem.GetSlot(i);
-                    if (!slot)
-                    {
-                        Console.Error.WriteLine("Can't get slot: " + i);
-                        break;
-                    }
-                    
-                    slot.SetSlot(_contents[i]);
+                    Console.Error.WriteLine("Can't get slot: " + i);
+                    break;
                 }
-            }
-            catch (NullReferenceException)
-            {
-            
+                    
+                slot.SetSlot(_contents[i]);
             }
         }
 
@@ -172,12 +189,12 @@ namespace Player.Inventory
             PlayerManager.InventoryObject.SetActive(false);
             GameManager.DisableCursor();
             PlayerManager.Selector.Enable();
-            if (DragAndDropSystem.IsDragging)
+            if (DragAndDropSystem && DragAndDropSystem.IsDragging)
             {
                 // Drops the item in cursor slot when inv close
                 if (CursorSlotSystem.Slot.GetCurrentStack() != null)
                 {
-                    WorldManager.SpawnItem(CursorSlotSystem.Slot.GetCurrentStack(), PlayerManager.PlayerGameObj.transform.forward);
+                    WorldManager.SpawnItem(CursorSlotSystem.Slot.GetCurrentStack(), PlayerManager.PlayerGameObj.transform.forward, true);
                 }
                 DragAndDropSystem.Reset();
             }

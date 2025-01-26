@@ -33,10 +33,8 @@ namespace System_UI
             {
                 Physics.Raycast(origin, PlayerManager.PlayerCamera.transform.forward,
                     out RaycastHit hit, PlayerManager.PickUpDistance);
-                
                 if (!hit.transform.gameObject) return; // Returns if null
-            
-                OnHoverOnObject?.Invoke(hit.transform.gameObject);
+                OnHoverOnObject?.Invoke(hit.rigidbody.gameObject);
             }
             catch (NullReferenceException) { }
         }

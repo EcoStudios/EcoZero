@@ -1,14 +1,17 @@
+using System;
 using System_UI;
 using UnityEngine;
 using World.Items;
+using Random = UnityEngine.Random;
 
-namespace Player.interactable
+namespace Player.Systems
 {
     public class HoverInfoSystem : MonoBehaviour
     {
 
         private int _currentRandom;
         private int _previousRandom;
+        
 
         void Start()
         {
@@ -30,7 +33,7 @@ namespace Player.interactable
             }
         }
 
-        private void OnHoverOnInteractableItem(ItemStack eventStack, int eventObjectUuid)
+        private void OnHoverOnInteractableItem(ItemStack eventStack, Guid eventObjectGuid)
         {
             if (PlayerManager.ActionBar.currentPriority > ActionBar.ActionBarPriority.Medium) return;
             string text = "Press [F] to pick up:\n(" + eventStack.StackSize + "X) " + eventStack.Item.name;

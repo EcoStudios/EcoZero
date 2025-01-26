@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace World.Items
@@ -14,10 +15,22 @@ namespace World.Items
         [Space] [Header("Item's Properties")] 
         public bool isInteractable = true;
         public float itemDamage;
-        public int maxStackSize; 
+        public int maxStackSize;
+        public ItemType itemType;
 
-
+        
+        public enum ItemType
+        { 
+           Null,
+           Structure,
+           Weapon,
+           Armor, 
+           Food,
+           Material
+        }
 
 
     }
+    
+
 }

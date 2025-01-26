@@ -3,12 +3,12 @@ using UnityEngine;
 using World;
 using World.Items;
 
-namespace Player.interactable
+namespace Player.Systems
 {
     public class InteractableSystem : MonoBehaviour
     {
 
-        public static event Action<ItemStack, int> OnHoverOnInteractableItem;
+        public static event Action<ItemStack, Guid> OnHoverOnInteractableItem;
         private bool _isSet;
 
         void Update()
@@ -26,17 +26,15 @@ namespace Player.interactable
 
         private void HoverEvent(GameObject eventObject)
         {
-            if (eventObject.transform.parent.gameObject != WorldManager.DroppedItemsFolder) return;
+            if (eventObject.transform.parent.gameObject != WorldManager.droppedItemsFolder) return;
             
-            int uuid = Int32.Parse(eventObject.name);
-            if (!WorldManager.ItemExistsInWorld(uuid)) return;
+            Guid guid = Guid.Parse(eventObject.name);
+            if (!WorldManager.ItemExistsInWorld(guid)) return;
             
-            ItemStack stack = WorldManager.GetItemStack(uuid);
+            ItemStack stack = WorldManager.GetItemStack(guid);
             if (stack == null || !stack.Item.isInteractable) return;
             
-            Debug.Log(stack.ToString());
-            
-            OnHoverOnInteractableItem?.Invoke(stack, uuid);
+            OnHoverOnInteractableItem?.Invoke(stack, guid);
         }
         
         

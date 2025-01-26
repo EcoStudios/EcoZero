@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
         Playing = 1
     }
     
-    public static GameState ActiveGameState = GameState.Playing;
+    public static GameState activeGameState;
     
     public void QuitGame()
     {
@@ -44,12 +44,13 @@ public class GameManager : MonoBehaviour
 
         // Do whatever else
         DisableCursor();
-        ActiveGameState = GameState.Playing;
+        activeGameState = GameState.Playing;
     }
 
     // Loading the mainmenu
     public void LoadToMainMenu()
     {
+        PlayerManager.Selector.Disable();
         PlayerManager.PlayerGameObj.SetActive(false); // so the main cam is off, for cam on loadingscreen to be active
         // Loading the scene
         GameObject loadingScreen = Instantiate(loadingScreenPrefab);
@@ -58,7 +59,7 @@ public class GameManager : MonoBehaviour
         
         // Do whatever else
         EnableCursor();
-        ActiveGameState = GameState.ActiveInMainMenu;
+        activeGameState = GameState.ActiveInMainMenu;
     }
 
     private IEnumerator LoadScene(int sceneIndex, GameObject loadingScreen)
@@ -80,7 +81,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         // Pausing the world time
-        if (ActiveGameState < 0)
+        if (activeGameState < 0)
         {
             Time.timeScale = 0;
         }
@@ -88,10 +89,6 @@ public class GameManager : MonoBehaviour
         {
             if (Time.timeScale == 0) Time.timeScale = 1.0f;
         }
-
-        // Changing gamestates automatically.
-        ActiveGameState = SceneManager.GetActiveScene().buildIndex == 0 
-            ? GameState.ActiveInMainMenu : GameState.Playing;
     }
     
     // Quality of life methods 

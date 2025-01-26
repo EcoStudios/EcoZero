@@ -110,14 +110,14 @@ namespace Player.Inventory
                 if (_inventory.CursorSlotSystem.Slot.GetCurrentStack().StackSize - 1 <= 0)
                 {
                     WorldManager.SpawnItem(_inventory.CursorSlotSystem.Slot.GetCurrentStack(),
-                        PlayerManager.PlayerGameObj.transform.position + Vector3.forward * 3);
+                        PlayerManager.PlayerGameObj.transform.position + Vector3.forward * 3, true);
                     _inventory.CursorSlotSystem.Slot.ClearSlot();
                 }
                 else
                 {
                     ItemStack droppedItem = new ItemStack(_inventory.CursorSlotSystem.Slot.GetCurrentStack().Item, 1);
                     WorldManager.SpawnItem(droppedItem, PlayerManager.PlayerGameObj.transform.position 
-                                                        + Vector3.forward * 3);
+                                                        + Vector3.forward * 3, true);
                     _inventory.CursorSlotSystem.Slot.GetCurrentStack().RemoveAmount(1);
                 }
             }
@@ -183,7 +183,7 @@ namespace Player.Inventory
             if (HoveredGameObject == null)
             {
                 WorldManager.SpawnItem(_inventory.CursorSlotSystem.Slot.GetCurrentStack(),
-                    PlayerManager.PlayerGameObj.transform.position + Vector3.forward * 3);
+                    PlayerManager.PlayerGameObj.transform.position + Vector3.forward * 3, true);
                 _inventory.CursorSlotSystem.Slot.ClearSlot();
             }
             // Dropped onto a slot

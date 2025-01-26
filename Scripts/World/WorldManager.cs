@@ -1,7 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using World.Items;
-using Random = UnityEngine.Random;
 
 namespace World
 {
@@ -9,52 +9,55 @@ namespace World
     {
 
         public Item testItem;
+        public Item craftingTable;
 
-        public static GameObject DroppedItemsFolder;
+        public static GameObject droppedItemsFolder;
+        public static GameObject placedItemsFolder;
 
-        private static readonly Dictionary<int, ItemStack> DroppedItems = new();
+        private static readonly Dictionary<Guid, ItemStack> DroppedItems = new();
 
-        public static void SpawnItem(ItemStack itemStack, Vector3 position)
+        public static void SpawnItem(ItemStack itemStack, Vector3 position, bool isDropped)
         {
-            GameObject itemObject = Instantiate(itemStack.Item.itemPrefab, DroppedItemsFolder.transform, true);
+            GameObject itemObject;
+            if (isDropped)
+            {
+                itemObject = Instantiate(itemStack.Item.itemPrefab, droppedItemsFolder.transform, true);
+            }
+            else
+            {
+                itemObject = Instantiate(itemStack.Item.itemPrefab, placedItemsFolder.transform, true);
+            }
             itemObject.transform.position = position;
             itemObject.transform.rotation = Quaternion.identity;
 
-            int uuid = CreateUuid();
-            itemObject.name = uuid.ToString();
+            Guid guid = Guid.NewGuid();
+            itemObject.name = guid.ToString();
             
-            DroppedItems.Add(uuid, itemStack);
+            DroppedItems.Add(guid, itemStack);
         }
 
-        public static void DeleteItem(int uuid)
+        public static void DeleteItem(Guid guid)
         {
-            Transform iTransform = DroppedItemsFolder.transform.Find(uuid.ToString());
+            Transform iTransform = droppedItemsFolder.transform.Find(guid.ToString());
             Destroy(iTransform.gameObject);
-            DroppedItems.Remove(uuid);
+            DroppedItems.Remove(guid);
         }
 
-        public static ItemStack GetItemStack(int uuid)
+        public static ItemStack GetItemStack(Guid guid)
         {
-            return DroppedItems[uuid];
+            return DroppedItems[guid];
         }
+        
 
-        private static int CreateUuid()
-        {
-            int uuid = Random.Range(1000000, 10000000);
-            while (DroppedItems.ContainsKey(uuid))
-            {
-                uuid = Random.Range(1000000, 10000000);
-            }
-            return uuid;
-        }
-
-        public static bool ItemExistsInWorld(int uuid) => DroppedItems.ContainsKey(uuid);
+        public static bool ItemExistsInWorld(Guid guid) => DroppedItems.ContainsKey(guid);
 
 
         void Start()
         {
-            DroppedItemsFolder = new GameObject("DroppedItemsFolder");
-            SpawnItem(new ItemStack(testItem, 5), new Vector3(5, 0, 5));
+            droppedItemsFolder = new GameObject("DroppedItemsFolder");
+            placedItemsFolder = new GameObject("PlacedItemsFolder");
+            SpawnItem(new ItemStack(testItem, 5), new Vector3(5, 0, 5), true);
+            SpawnItem(new ItemStack(craftingTable, 5), new Vector3(3, 0, 5), false);
         }
     }
 }

@@ -1,3 +1,4 @@
+using System_UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -36,7 +37,7 @@ namespace Player.Systems
         private void ReturnToGame()
         {
             GameManager.DisableCursor();
-            GameManager.ActiveGameState = GameManager.GameState.Playing;
+            GameManager.activeGameState = GameManager.GameState.Playing;
             DeleteObject();
         }
 

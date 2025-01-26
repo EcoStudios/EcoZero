@@ -1,4 +1,4 @@
-using Player.interactable;
+using System;
 using System_UI;
 using UnityEngine;
 using World;
@@ -14,13 +14,13 @@ namespace Player.Systems
             InteractableSystem.OnHoverOnInteractableItem += HoverOnInteractableItemEvent;
         }
 
-        private void HoverOnInteractableItemEvent(ItemStack eventStack, int eventObjectUuid)
+        private void HoverOnInteractableItemEvent(ItemStack eventStack, Guid eventObjectGuid)
         {
             if (!Input.GetKeyUp(KeyCode.F)) return;
 
             if (PlayerManager.Inventory.CanHoldItem(eventStack))
             {
-                WorldManager.DeleteItem(eventObjectUuid);
+                WorldManager.DeleteItem(eventObjectGuid);
                 PlayerManager.Inventory.AddItem(eventStack);
                 Debug.Log(eventStack.ToString());
                 PlayerManager.Inventory.UpdateInventoryUI();
